@@ -6,8 +6,8 @@ const swotAnalysisTrigger: Trigger<
   typeof SwotAnalysisWorkflow.definition
 > = {
   type: TriggerTypes.Shortcut,
-  name: "SWOT分析を開始",
-  description: "質問に答えるだけでSWOT分析を始めます",
+  name: "ビジネス分析を開始",
+  description: "フレームワークを選び、質問に答えて分析を始めます",
   workflow: `#/workflows/${SwotAnalysisWorkflow.definition.callback_id}`,
   inputs: {
     interactivity: {

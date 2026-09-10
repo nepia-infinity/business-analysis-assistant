@@ -1,16 +1,17 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
+import SwotAnalysisWorkflow from "./workflows/swot_analysis_workflow.ts";
 
 /**
- * The app manifest contains the app's configuration. This
- * file defines attributes like app name and description.
+ * The app manifest contains the app's configuration.
  * https://api.slack.com/automation/manifest
  */
 export default Manifest({
-  name: "slack-strategy-assistant",
-  description: "A blank template for building Slack apps with Deno",
+  name: "ビジネス分析アシスタント",
+  description:
+    "質問に答えるだけでビジネスフレームワークを使った分析を始められるSlackアプリ",
   icon: "assets/default_new_app_icon.png",
   functions: [],
-  workflows: [],
+  workflows: [SwotAnalysisWorkflow],
   outgoingDomains: [],
   botScopes: ["commands", "chat:write", "chat:write.public"],
 });

@@ -1,4 +1,5 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
+import { GenerateBusinessAnalysisFunctionDefinition } from "../functions/generate_business_analysis_function.ts";
 
 /**
  * Collects the information needed for a SWOT analysis.
@@ -60,7 +61,7 @@ const inputForm = SwotAnalysisWorkflow.addStep(
             },
             {
               value: "vrio",
-              title: "VRIO分析（価値・稀少性・模倣困難さ・利益）",
+              title: "VRIO分析（価値・希少性・模倣困難性・組織）",
               description: "経営資源の競争優位性を評価します",
             },
           ],
@@ -106,32 +107,22 @@ const inputForm = SwotAnalysisWorkflow.addStep(
   },
 );
 
+const analysisStep = SwotAnalysisWorkflow.addStep(
+  GenerateBusinessAnalysisFunctionDefinition,
+  {
+    framework: inputForm.outputs.fields.framework,
+    analysis_subject: inputForm.outputs.fields.analysis_subject,
+    purpose: inputForm.outputs.fields.purpose,
+    target_customer: inputForm.outputs.fields.target_customer,
+    known_facts: inputForm.outputs.fields.known_facts,
+    concerns: inputForm.outputs.fields.concerns,
+  },
+);
+
 SwotAnalysisWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: inputForm.outputs.fields.channel,
-  message: `*ビジネス分析の入力を受け付けました* :memo:
-
-*選択したフレームワーク*
-${inputForm.outputs.fields.framework}
-
-*分析対象*
-${inputForm.outputs.fields.analysis_subject}
-
-*分析の目的*
-${inputForm.outputs.fields.purpose}
-
-*想定する顧客*
-${inputForm.outputs.fields.target_customer}
-
-*分かっている事実*
-${inputForm.outputs.fields.known_facts}
-
-*課題・懸念点*
-${inputForm.outputs.fields.concerns}
-
-*分析結果（UI確認用）*
-選択したフレームワークに応じた分析結果を、LLM連携後にここへ表示します。
-
-入力者: <@${SwotAnalysisWorkflow.inputs.user}>`,
+  message:
+    `${analysisStep.outputs.analysis_result}\n\n入力者: <@${SwotAnalysisWorkflow.inputs.user}>`,
 });
 
 export default SwotAnalysisWorkflow;

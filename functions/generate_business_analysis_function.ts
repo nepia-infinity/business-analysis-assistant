@@ -1,8 +1,4 @@
-import {
-  DefineFunction,
-  Schema,
-  SlackFunction,
-} from "deno-slack-sdk/mod.ts";
+import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 
 export const GenerateBusinessAnalysisFunctionDefinition = DefineFunction({
   callback_id: "generate_business_analysis",
@@ -55,7 +51,12 @@ const frameworkDefinitions: Record<
 > = {
   swot: {
     label: "SWOT分析",
-    perspectives: ["Strengths（強み）", "Weaknesses（弱み）", "Opportunities（機会）", "Threats（脅威）"],
+    perspectives: [
+      "Strengths（強み）",
+      "Weaknesses（弱み）",
+      "Opportunities（機会）",
+      "Threats（脅威）",
+    ],
   },
   "3c": {
     label: "3C分析",
@@ -63,7 +64,12 @@ const frameworkDefinitions: Record<
   },
   "4p": {
     label: "4P分析",
-    perspectives: ["Product（製品）", "Price（価格）", "Place（流通）", "Promotion（販促）"],
+    perspectives: [
+      "Product（製品）",
+      "Price（価格）",
+      "Place（流通）",
+      "Promotion（販促）",
+    ],
   },
   "4c": {
     label: "4C分析",

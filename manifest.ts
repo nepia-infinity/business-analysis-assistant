@@ -7,7 +7,7 @@ import { GenerateBusinessAnalysisFunctionDefinition } from "./functions/generate
  * https://api.slack.com/automation/manifest
  */
 export default Manifest({
-  name: "ビジネス分析アシスタント",
+  name: "Business Analysis Assistant",
   description:
     "質問に答えるだけでビジネスフレームワークを使った分析を始められるSlackアプリ",
   icon: "assets/default_new_app_icon.png",

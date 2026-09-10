@@ -1,5 +1,5 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
-import SwotAnalysisWorkflow from "./workflows/swot_analysis_workflow.ts";
+import BusinessAnalysisFrameworkWorkflow from "./workflows/business_analysis_framework_workflow.ts";
 import { GenerateBusinessAnalysisFunctionDefinition } from "./functions/generate_business_analysis_function.ts";
 
 /**
@@ -12,7 +12,7 @@ export default Manifest({
     "質問に答えるだけでビジネスフレームワークを使った分析を始められるSlackアプリ",
   icon: "assets/default_new_app_icon.png",
   functions: [GenerateBusinessAnalysisFunctionDefinition],
-  workflows: [SwotAnalysisWorkflow],
+  workflows: [BusinessAnalysisFrameworkWorkflow],
   outgoingDomains: [],
   botScopes: ["commands", "chat:write", "chat:write.public"],
 });

@@ -6,7 +6,7 @@ import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
  */
 const SwotAnalysisWorkflow = DefineWorkflow({
   callback_id: "swot_analysis_workflow",
-  title: "ビジネス分析",
+  title: "ビジネスフレームワーク分析",
   description: "フレームワークを選び、商品・事業・アイデアを分析します",
   input_parameters: {
     properties: {
@@ -40,27 +40,27 @@ const inputForm = SwotAnalysisWorkflow.addStep(
           choices: [
             {
               value: "swot",
-              title: "SWOT分析",
+              title: "SWOT分析（強み・弱み・機会・脅威）",
               description: "強み・弱み・機会・脅威を整理します",
             },
             {
               value: "3c",
-              title: "3C分析",
+              title: "3C分析（顧客・競合・自社）",
               description: "顧客・競合・自社の観点から整理します",
             },
             {
               value: "4p",
-              title: "4P分析",
+              title: "4P分析（製品・価格・流通・販促）",
               description: "製品・価格・流通・販促を整理します",
             },
             {
               value: "4c",
-              title: "4C分析",
+              title: "4C分析（顧客価値・コスト・利便性・対話）",
               description: "顧客価値・コスト・利便性・対話を整理します",
             },
             {
               value: "vrio",
-              title: "VRIO分析",
+              title: "VRIO分析（価値・稀少性・模倣困難さ・利益）",
               description: "経営資源の競争優位性を評価します",
             },
           ],

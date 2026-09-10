@@ -6,8 +6,8 @@ import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
  */
 const SwotAnalysisWorkflow = DefineWorkflow({
   callback_id: "swot_analysis_workflow",
-  title: "SWOT分析",
-  description: "商品・事業・アイデアの情報を入力してSWOT分析を始めます",
+  title: "ビジネス分析",
+  description: "フレームワークを選び、商品・事業・アイデアを分析します",
   input_parameters: {
     properties: {
       interactivity: {
@@ -27,11 +27,44 @@ const SwotAnalysisWorkflow = DefineWorkflow({
 const inputForm = SwotAnalysisWorkflow.addStep(
   Schema.slack.functions.OpenForm,
   {
-    title: "SWOT分析を作成",
+    title: "ビジネス分析を作成",
     interactivity: SwotAnalysisWorkflow.inputs.interactivity,
     submit_label: "分析を開始",
     fields: {
       elements: [
+        {
+          name: "framework",
+          title: "分析フレームワーク",
+          type: Schema.types.string,
+          enum: ["swot", "3c", "4p", "4c", "vrio"],
+          choices: [
+            {
+              value: "swot",
+              title: "SWOT分析",
+              description: "強み・弱み・機会・脅威を整理します",
+            },
+            {
+              value: "3c",
+              title: "3C分析",
+              description: "顧客・競合・自社の観点から整理します",
+            },
+            {
+              value: "4p",
+              title: "4P分析",
+              description: "製品・価格・流通・販促を整理します",
+            },
+            {
+              value: "4c",
+              title: "4C分析",
+              description: "顧客価値・コスト・利便性・対話を整理します",
+            },
+            {
+              value: "vrio",
+              title: "VRIO分析",
+              description: "経営資源の競争優位性を評価します",
+            },
+          ],
+        },
         {
           name: "channel",
           title: "結果の投稿先",
@@ -68,14 +101,17 @@ const inputForm = SwotAnalysisWorkflow.addStep(
           long: true,
         },
       ],
-      required: ["channel", "analysis_subject", "purpose"],
+      required: ["framework", "channel", "analysis_subject", "purpose"],
     },
   },
 );
 
 SwotAnalysisWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: inputForm.outputs.fields.channel,
-  message: `*SWOT分析の入力を受け付けました* :memo:
+  message: `*ビジネス分析の入力を受け付けました* :memo:
+
+*選択したフレームワーク*
+${inputForm.outputs.fields.framework}
 
 *分析対象*
 ${inputForm.outputs.fields.analysis_subject}
@@ -92,11 +128,8 @@ ${inputForm.outputs.fields.known_facts}
 *課題・懸念点*
 ${inputForm.outputs.fields.concerns}
 
-*SWOT分析（UI確認用）*
-• *Strengths（強み）*: LLM連携後に生成します
-• *Weaknesses（弱み）*: LLM連携後に生成します
-• *Opportunities（機会）*: LLM連携後に生成します
-• *Threats（脅威）*: LLM連携後に生成します
+*分析結果（UI確認用）*
+選択したフレームワークに応じた分析結果を、LLM連携後にここへ表示します。
 
 入力者: <@${SwotAnalysisWorkflow.inputs.user}>`,
 });

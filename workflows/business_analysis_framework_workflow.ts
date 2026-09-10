@@ -2,11 +2,11 @@ import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
 import { GenerateBusinessAnalysisFunctionDefinition } from "../functions/generate_business_analysis_function.ts";
 
 /**
- * Collects the information needed for a SWOT analysis.
+ * Collects the information needed for a business framework analysis.
  * LLM generation will be added after the Slack UI has been validated.
  */
-const SwotAnalysisWorkflow = DefineWorkflow({
-  callback_id: "swot_analysis_workflow",
+const BusinessAnalysisFrameworkWorkflow = DefineWorkflow({
+  callback_id: "business_analysis_framework_workflow",
   title: "ビジネスフレームワーク分析",
   description: "フレームワークを選び、商品・事業・アイデアを分析します",
   input_parameters: {
@@ -25,11 +25,11 @@ const SwotAnalysisWorkflow = DefineWorkflow({
   },
 });
 
-const inputForm = SwotAnalysisWorkflow.addStep(
+const inputForm = BusinessAnalysisFrameworkWorkflow.addStep(
   Schema.slack.functions.OpenForm,
   {
     title: "ビジネス分析を作成",
-    interactivity: SwotAnalysisWorkflow.inputs.interactivity,
+    interactivity: BusinessAnalysisFrameworkWorkflow.inputs.interactivity,
     submit_label: "分析を開始",
     fields: {
       elements: [
@@ -70,7 +70,7 @@ const inputForm = SwotAnalysisWorkflow.addStep(
           name: "channel",
           title: "結果の投稿先",
           type: Schema.slack.types.channel_id,
-          default: SwotAnalysisWorkflow.inputs.channel,
+          default: BusinessAnalysisFrameworkWorkflow.inputs.channel,
         },
         {
           name: "analysis_subject",
@@ -107,7 +107,7 @@ const inputForm = SwotAnalysisWorkflow.addStep(
   },
 );
 
-const analysisStep = SwotAnalysisWorkflow.addStep(
+const analysisStep = BusinessAnalysisFrameworkWorkflow.addStep(
   GenerateBusinessAnalysisFunctionDefinition,
   {
     framework: inputForm.outputs.fields.framework,
@@ -119,10 +119,10 @@ const analysisStep = SwotAnalysisWorkflow.addStep(
   },
 );
 
-SwotAnalysisWorkflow.addStep(Schema.slack.functions.SendMessage, {
+BusinessAnalysisFrameworkWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: inputForm.outputs.fields.channel,
   message:
-    `${analysisStep.outputs.analysis_result}\n\n入力者: <@${SwotAnalysisWorkflow.inputs.user}>`,
+    `${analysisStep.outputs.analysis_result}\n\n入力者: <@${BusinessAnalysisFrameworkWorkflow.inputs.user}>`,
 });
 
-export default SwotAnalysisWorkflow;
+export default BusinessAnalysisFrameworkWorkflow;

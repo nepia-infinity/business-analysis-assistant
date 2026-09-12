@@ -73,36 +73,13 @@ const inputForm = BusinessAnalysisFrameworkWorkflow.addStep(
           default: BusinessAnalysisFrameworkWorkflow.inputs.channel,
         },
         {
-          name: "analysis_subject",
-          title: "分析対象",
-          type: Schema.types.string,
-        },
-        {
-          name: "purpose",
-          title: "分析の目的",
-          type: Schema.types.string,
-          long: true,
-        },
-        {
-          name: "target_customer",
-          title: "想定する顧客",
-          type: Schema.types.string,
-          long: true,
-        },
-        {
-          name: "known_facts",
-          title: "分かっている事実",
-          type: Schema.types.string,
-          long: true,
-        },
-        {
-          name: "concerns",
-          title: "課題・懸念点",
+          name: "prompt",
+          title: "分析したい内容",
           type: Schema.types.string,
           long: true,
         },
       ],
-      required: ["framework", "channel", "analysis_subject", "purpose"],
+      required: ["framework", "channel", "prompt"],
     },
   },
 );
@@ -111,11 +88,7 @@ const analysisStep = BusinessAnalysisFrameworkWorkflow.addStep(
   GenerateBusinessAnalysisFunctionDefinition,
   {
     framework: inputForm.outputs.fields.framework,
-    analysis_subject: inputForm.outputs.fields.analysis_subject,
-    purpose: inputForm.outputs.fields.purpose,
-    target_customer: inputForm.outputs.fields.target_customer,
-    known_facts: inputForm.outputs.fields.known_facts,
-    concerns: inputForm.outputs.fields.concerns,
+    prompt: inputForm.outputs.fields.prompt,
   },
 );
 

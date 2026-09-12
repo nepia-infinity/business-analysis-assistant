@@ -11,28 +11,12 @@ export const GenerateBusinessAnalysisFunctionDefinition = DefineFunction({
         type: Schema.types.string,
         description: "使用する分析フレームワーク",
       },
-      analysis_subject: {
+      prompt: {
         type: Schema.types.string,
-        description: "分析する商品・事業・アイデア",
-      },
-      purpose: {
-        type: Schema.types.string,
-        description: "分析の目的",
-      },
-      target_customer: {
-        type: Schema.types.string,
-        description: "想定する顧客",
-      },
-      known_facts: {
-        type: Schema.types.string,
-        description: "すでに分かっている事実",
-      },
-      concerns: {
-        type: Schema.types.string,
-        description: "現在の課題や懸念点",
+        description: "分析したい内容",
       },
     },
-    required: ["framework", "analysis_subject", "purpose"],
+    required: ["framework", "prompt"],
   },
   output_parameters: {
     properties: {
@@ -45,50 +29,70 @@ export const GenerateBusinessAnalysisFunctionDefinition = DefineFunction({
   },
 });
 
-const frameworkDefinitions: Record<
-  string,
-  { label: string; perspectives: string[] }
-> = {
-  swot: {
-    label: "SWOT分析",
-    perspectives: [
-      "Strengths（強み）",
-      "Weaknesses（弱み）",
-      "Opportunities（機会）",
-      "Threats（脅威）",
-    ],
-  },
-  "3c": {
-    label: "3C分析",
-    perspectives: ["Customer（顧客）", "Competitor（競合）", "Company（自社）"],
-  },
-  "4p": {
-    label: "4P分析",
-    perspectives: [
-      "Product（製品）",
-      "Price（価格）",
-      "Place（流通）",
-      "Promotion（販促）",
-    ],
-  },
-  "4c": {
-    label: "4C分析",
-    perspectives: [
-      "Customer Value（顧客価値）",
-      "Cost（顧客負担）",
-      "Convenience（利便性）",
-      "Communication（対話）",
-    ],
-  },
-  vrio: {
-    label: "VRIO分析",
-    perspectives: [
-      "Value（経済的価値）",
-      "Rarity（希少性）",
-      "Imitability（模倣困難性）",
-      "Organization（組織）",
-    ],
-  },
+type FrameworkDefinition = {
+  label: string;
+  perspectives: string[];
+};
+
+const getFrameworkDefinition = (framework: string): FrameworkDefinition => {
+  switch (framework) {
+    case "swot":
+      return {
+        label: "SWOT分析",
+        perspectives: [
+          "Strengths（強み）",
+          "Weaknesses（弱み）",
+          "Opportunities（機会）",
+          "Threats（脅威）",
+        ],
+      };
+
+    case "3c":
+      return {
+        label: "3C分析",
+        perspectives: [
+          "Customer（顧客）",
+          "Competitor（競合）",
+          "Company（自社）",
+        ],
+      };
+
+    case "4p":
+      return {
+        label: "4P分析",
+        perspectives: [
+          "Product（製品）",
+          "Price（価格）",
+          "Place（流通）",
+          "Promotion（販促）",
+        ],
+      };
+
+    case "4c":
+      return {
+        label: "4C分析",
+        perspectives: [
+          "Customer Value（顧客価値）",
+          "Cost（顧客負担）",
+          "Convenience（利便性）",
+          "Communication（対話）",
+        ],
+      };
+
+    case "vrio":
+      return {
+        label: "VRIO分析",
+        perspectives: [
+          "Value（経済的価値）",
+          "Rarity（希少性）",
+          "Imitability（模倣困難性）",
+          "Organization（組織）",
+        ],
+      };
+
+    default:
+      throw new Error(`Unsupported framework: ${framework}`);
+  }
 };
 
 const normalizeInput = (value?: string): string => {
@@ -106,11 +110,13 @@ const normalizeInput = (value?: string): string => {
 export default SlackFunction(
   GenerateBusinessAnalysisFunctionDefinition,
   ({ inputs }) => {
-    const framework = frameworkDefinitions[inputs.framework];
+    let framework: FrameworkDefinition;
 
-    if (!framework) {
+    try {
+      framework = getFrameworkDefinition(inputs.framework);
+    } catch (error) {
       return {
-        error: `Unsupported framework: ${inputs.framework}`,
+        error: error instanceof Error ? error.message : "Unsupported framework",
       };
     }
 
@@ -120,20 +126,8 @@ export default SlackFunction(
 
     const analysisResult = `*${framework.label}* :bar_chart:
 
-*分析対象*
-${normalizeInput(inputs.analysis_subject)}
-
-*分析の目的*
-${normalizeInput(inputs.purpose)}
-
-*想定する顧客*
-${normalizeInput(inputs.target_customer)}
-
-*分かっている事実*
-${normalizeInput(inputs.known_facts)}
-
-*課題・懸念点*
-${normalizeInput(inputs.concerns)}
+*入力内容*
+${normalizeInput(inputs.prompt)}
 
 *分析する観点*
 ${perspectives}

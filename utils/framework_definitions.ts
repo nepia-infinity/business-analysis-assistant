@@ -10,6 +10,12 @@ export type FrameworkDefinition = {
 
 export type FrameworkAnalysisResults = Record<string, string>;
 
+/**
+ * {
+ *  swot: { ... },   // OK
+ *  "3c": { ... },   // クォート必須
+ * }
+ */
 export const frameworkDefinitions: Record<string, FrameworkDefinition> = {
   swot: {
     label: "SWOT分析",
@@ -57,9 +63,29 @@ export const frameworkDefinitions: Record<string, FrameworkDefinition> = {
   },
 };
 
+/**
+ * 指定されたフレームワーク名に対応する定義を取得します。
+ *
+ * `frameworkDefinitions` をフレームワーク名で参照し、
+ * 対応する `label` と `perspectives` を返します。
+ *
+ * 未対応のフレームワークが指定された場合はエラーを送出します。
+ *
+ * @param framework - 取得するフレームワーク名。例: `"swot"`, `"3c"`, `"vrio"`
+ * @returns 指定されたフレームワークの定義
+ * @throws 未対応のフレームワークが指定された場合
+ *
+ * @example
+ * const framework = getFrameworkDefinition("vrio");
+ *
+ * console.log(framework.label);
+ * // => "VRIO分析"
+ */
+
 export const getFrameworkDefinition = (
   framework: string,
 ): FrameworkDefinition => {
+  // frameworkDefinitions[vrio] labelとperspectivesを返す
   const definition = frameworkDefinitions[framework];
 
   if (!definition) {

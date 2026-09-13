@@ -1,4 +1,6 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
+import { buildFrameworkTableBlock } from "../blocks/framework_table_block.ts";
+import { getFrameworkDefinition } from "../utils/framework_definitions.ts";
 
 export const GenerateBusinessAnalysisFunctionDefinition = DefineFunction({
   callback_id: "generate_business_analysis",
@@ -15,91 +17,24 @@ export const GenerateBusinessAnalysisFunctionDefinition = DefineFunction({
         type: Schema.types.string,
         description: "分析したい内容",
       },
-    },
-    required: ["framework", "prompt"],
-  },
-  output_parameters: {
-    properties: {
-      analysis_result: {
-        type: Schema.types.string,
-        description: "Slackへ投稿する分析結果",
+      channel: {
+        type: Schema.slack.types.channel_id,
+        description: "分析結果の投稿先",
+      },
+      user: {
+        type: Schema.slack.types.user_id,
+        description: "分析を実行したユーザー",
       },
     },
-    required: ["analysis_result"],
+    required: ["framework", "prompt", "channel", "user"],
+  },
+  output_parameters: {
+    properties: {},
+    required: [],
   },
 });
 
-type FrameworkDefinition = {
-  label: string;
-  perspectives: string[];
-};
-
-const getFrameworkDefinition = (framework: string): FrameworkDefinition => {
-  switch (framework) {
-    case "swot":
-      return {
-        label: "SWOT分析",
-        perspectives: [
-          "Strengths（強み）",
-          "Weaknesses（弱み）",
-          "Opportunities（機会）",
-          "Threats（脅威）",
-        ],
-      };
-
-    case "3c":
-      return {
-        label: "3C分析",
-        perspectives: [
-          "Customer（顧客）",
-          "Competitor（競合）",
-          "Company（自社）",
-        ],
-      };
-
-    case "4p":
-      return {
-        label: "4P分析",
-        perspectives: [
-          "Product（製品）",
-          "Price（価格）",
-          "Place（流通）",
-          "Promotion（販促）",
-        ],
-      };
-
-    case "4c":
-      return {
-        label: "4C分析",
-        perspectives: [
-          "Customer Value（顧客価値）",
-          "Cost（顧客負担）",
-          "Convenience（利便性）",
-          "Communication（対話）",
-        ],
-      };
-
-    case "vrio":
-      return {
-        label: "VRIO分析",
-        perspectives: [
-          "Value（経済的価値）",
-          "Rarity（希少性）",
-          "Imitability（模倣困難性）",
-          "Organization（組織）",
-        ],
-      };
-
-    default:
-      throw new Error(`Unsupported framework: ${framework}`);
-  }
-};
-
-const normalizeInput = (value?: string): string => {
-  if (!value?.trim()) {
-    return "未入力";
-  }
-
+const normalizeInput = (value: string): string => {
   return value
     .trim()
     .replaceAll("&", "&amp;")
@@ -109,35 +44,47 @@ const normalizeInput = (value?: string): string => {
 
 export default SlackFunction(
   GenerateBusinessAnalysisFunctionDefinition,
-  ({ inputs }) => {
-    let framework: FrameworkDefinition;
-
+  async ({ inputs, client }) => {
     try {
-      framework = getFrameworkDefinition(inputs.framework);
+      const framework = getFrameworkDefinition(inputs.framework);
+      const tableBlock = buildFrameworkTableBlock(inputs.framework);
+      const prompt = normalizeInput(inputs.prompt);
+
+      const response = await client.apiCall("chat.postMessage", {
+        channel: inputs.channel,
+        text: `${framework.label}: ${inputs.prompt}`,
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `*入力内容*\n${prompt}`,
+            },
+          },
+          tableBlock,
+          {
+            type: "context",
+            elements: [
+              {
+                type: "mrkdwn",
+                text: `入力者: <@${inputs.user}>`,
+              },
+            ],
+          },
+        ],
+      });
+
+      if (!response.ok) {
+        return {
+          error: response.error ?? "Failed to post analysis result",
+        };
+      }
+
+      return { outputs: {} };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Unsupported framework",
+        error: error instanceof Error ? error.message : "Failed to generate analysis",
       };
     }
-
-    const perspectives = framework.perspectives
-      .map((perspective) => `• ${perspective}: LLM連携後に分析結果を表示します`)
-      .join("\n");
-
-    const analysisResult = `*${framework.label}* :bar_chart:
-
-*入力内容*
-${normalizeInput(inputs.prompt)}
-
-*分析する観点*
-${perspectives}
-
-_現在はCustom Functionの接続確認用です。次の段階でLLMによる分析結果に置き換えます。_`;
-
-    return {
-      outputs: {
-        analysis_result: analysisResult,
-      },
-    };
   },
 );

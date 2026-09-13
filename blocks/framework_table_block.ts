@@ -1,4 +1,7 @@
-import { getFrameworkDefinition } from "../utils/framework_definitions.ts";
+import {
+  type FrameworkAnalysisResults,
+  getFrameworkDefinition,
+} from "../utils/framework_definitions.ts";
 
 type RawTextCell = {
   type: "raw_text";
@@ -18,7 +21,7 @@ const rawText = (text: string): RawTextCell => ({
 
 export const buildFrameworkTableBlock = (
   frameworkName: string,
-  results?: string[],
+  results?: FrameworkAnalysisResults,
 ): DataTableBlock => {
   const framework = getFrameworkDefinition(frameworkName);
 
@@ -27,10 +30,11 @@ export const buildFrameworkTableBlock = (
     caption: framework.label,
     rows: [
       [rawText("観点"), rawText("分析結果")],
-      ...framework.perspectives.map((perspective, index) => [
-        rawText(perspective),
+      ...framework.perspectives.map((perspective) => [
+        rawText(perspective.label),
         rawText(
-          results?.[index] ?? "LLM連携後に分析結果を表示します",
+          results?.[perspective.key] ??
+            "LLM連携後に分析結果を表示します",
         ),
       ]),
     ],

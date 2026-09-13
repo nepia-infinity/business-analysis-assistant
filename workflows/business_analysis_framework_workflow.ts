@@ -84,18 +84,14 @@ const inputForm = BusinessAnalysisFrameworkWorkflow.addStep(
   },
 );
 
-const analysisStep = BusinessAnalysisFrameworkWorkflow.addStep(
+BusinessAnalysisFrameworkWorkflow.addStep(
   GenerateBusinessAnalysisFunctionDefinition,
   {
     framework: inputForm.outputs.fields.framework,
     prompt: inputForm.outputs.fields.prompt,
+    channel: inputForm.outputs.fields.channel,
+    user: BusinessAnalysisFrameworkWorkflow.inputs.user,
   },
 );
-
-BusinessAnalysisFrameworkWorkflow.addStep(Schema.slack.functions.SendMessage, {
-  channel_id: inputForm.outputs.fields.channel,
-  message:
-    `${analysisStep.outputs.analysis_result}\n\n入力者: <@${BusinessAnalysisFrameworkWorkflow.inputs.user}>`,
-});
 
 export default BusinessAnalysisFrameworkWorkflow;

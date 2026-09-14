@@ -64,6 +64,12 @@ const inputForm = BusinessAnalysisFrameworkWorkflow.addStep(
               title: "VRIO分析（価値・希少性・模倣困難性・組織）",
               description: "経営資源の競争優位性を評価します",
             },
+            {
+              value: "social-style",
+              title: "ソーシャルスタイル分析（行動傾向・接し方）",
+              description:
+                "行動傾向から推定スタイルと効果的な接し方を整理します",
+            },
           ],
         },
         {

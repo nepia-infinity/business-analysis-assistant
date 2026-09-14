@@ -61,6 +61,17 @@ export const frameworkDefinitions: Record<string, FrameworkDefinition> = {
       { key: "organization", label: "Organization（組織）" },
     ],
   },
+  "social-style": {
+    label: "ソーシャルスタイル分析",
+    perspectives: [
+      { key: "observed_behavior", label: "観察できる行動" },
+      { key: "assertiveness", label: "自己主張度" },
+      { key: "responsiveness", label: "感情表現度" },
+      { key: "estimated_style", label: "推定スタイル" },
+      { key: "communication_tips", label: "効果的な接し方" },
+      { key: "cautions", label: "判断上の注意" },
+    ],
+  },
 };
 
 /**

@@ -12,7 +12,7 @@ type Fetcher = (
 ) => Promise<Response>;
 
 type SakanaClientOptions = {
-  apiKey?: string;
+  apiKey: string;
   fetcher?: Fetcher;
 };
 
@@ -63,13 +63,13 @@ const parseAnalysisResults = (
 export const generateBusinessAnalysis = async (
   frameworkName: string,
   userPrompt: string,
-  options: SakanaClientOptions = {},
+  options: SakanaClientOptions,
 ): Promise<FrameworkAnalysisResults> => {
   const framework = getFrameworkDefinition(frameworkName);
-  const apiKey = options.apiKey ?? Deno.env.get("SAKANA_AI_API_KEY");
+  const apiKey = options.apiKey;
 
   if (!apiKey?.trim()) {
-    throw new Error("SAKANA_API_KEY is not configured");
+    throw new Error("SAKANA_AI_API_KEY is not configured");
   }
 
   const properties = Object.fromEntries(

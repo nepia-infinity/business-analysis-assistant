@@ -28,13 +28,15 @@ git clone https://github.com/nepia-infinity/business-analysis-assistant.git
 cd business-analysis-assistant
 ```
 
-Sakana AIのAPIキーをSlackアプリの環境変数として登録します。
+ローカル開発では、プロジェクト直下に `.env` を作成してSakana AIのAPIキーを
+設定します。
 
-```shell
-slack env add SAKANA_API_KEY "fish_..."
+```dotenv
+SAKANA_AI_API_KEY=fish_...
 ```
 
-APIキーはソースコードや `.env` に保存せず、Slack CLIで管理してください。
+`.env` はGitの管理対象外です。APIキーをソースコードへ直接記載しないでください。
+ファイルを変更した場合は `slack run` を再起動します。
 
 ## ローカル実行
 
@@ -55,7 +57,11 @@ slack trigger create \
 
 ## デプロイ
 
+デプロイ版では `.env` は使用されません。APIキーをSlackへ登録してから
+デプロイします。
+
 ```shell
+slack env set SAKANA_AI_API_KEY "fish_..."
 slack deploy
 slack trigger create \
   --trigger-def triggers/business_analysis_framework_trigger.ts

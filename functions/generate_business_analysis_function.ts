@@ -45,12 +45,21 @@ const escapeMrkdwn = (value: string): string => {
 
 export default SlackFunction(
   GenerateBusinessAnalysisFunctionDefinition,
-  async ({ inputs, client }) => {
+  async ({ inputs, client, env }) => {
     try {
+      const apiKey = env["SAKANA_AI_API_KEY"];
+
+      if (!apiKey?.trim()) {
+        return {
+          error: "SAKANA_AI_API_KEYが設定されていません",
+        };
+      }
+
       const framework = getFrameworkDefinition(inputs.framework);
       const analysisResults = await generateBusinessAnalysis(
         inputs.framework,
         inputs.prompt,
+        { apiKey },
       );
       const tableBlock = buildFrameworkTableBlock(
         inputs.framework,

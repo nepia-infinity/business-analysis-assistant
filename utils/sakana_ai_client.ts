@@ -66,7 +66,7 @@ export const generateBusinessAnalysis = async (
   options: SakanaClientOptions = {},
 ): Promise<FrameworkAnalysisResults> => {
   const framework = getFrameworkDefinition(frameworkName);
-  const apiKey = options.apiKey ?? Deno.env.get("SAKANA_API_KEY");
+  const apiKey = options.apiKey ?? Deno.env.get("SAKANA_AI_API_KEY");
 
   if (!apiKey?.trim()) {
     throw new Error("SAKANA_API_KEY is not configured");

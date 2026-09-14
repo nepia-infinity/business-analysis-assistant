@@ -2,6 +2,7 @@ import {
   type FrameworkAnalysisResults,
   getFrameworkDefinition,
 } from "./framework_definitions.ts";
+import { getFrameworkSystemPrompt } from "./framework_system_prompt.ts";
 
 const SAKANA_API_URL = "https://api.sakana.ai/v1/chat/completions";
 const SAKANA_MODEL = "sakana-namazu";
@@ -95,8 +96,7 @@ export const generateBusinessAnalysis = async (
       messages: [
         {
           role: "system",
-          content:
-            "あなたは慎重なビジネスアナリストです。入力された情報だけを根拠に分析し、事実と推測を区別してください。情報が不足している観点では、不足している情報と確認すべき事項を明示してください。各観点は日本語で200文字以内を目安に簡潔に記述してください。",
+          content: getFrameworkSystemPrompt(framework.label),
         },
         {
           role: "user",

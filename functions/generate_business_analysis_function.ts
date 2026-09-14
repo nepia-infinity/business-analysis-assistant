@@ -47,7 +47,9 @@ export default SlackFunction(
   GenerateBusinessAnalysisFunctionDefinition,
   async ({ inputs, client, env }) => {
     try {
-      const apiKey = env["SAKANA_AI_API_KEY"];
+      // Slackの本番環境から環境変数を取得する。失敗したらローカルの.envから取得する。
+      const apiKey = env["SAKANA_AI_API_KEY"] ??
+        Deno.env.get("SAKANA_AI_API_KEY");
 
       if (!apiKey?.trim()) {
         return {

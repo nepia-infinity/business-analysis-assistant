@@ -1,6 +1,7 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { buildFrameworkTableBlock } from "../blocks/framework_table_block.ts";
 import { getFrameworkDefinition } from "../utils/framework_definitions.ts";
+import { generateBusinessAnalysis } from "../utils/sakana_ai_client.ts";
 
 export const GenerateBusinessAnalysisFunctionDefinition = DefineFunction({
   callback_id: "generate_business_analysis",
@@ -34,7 +35,7 @@ export const GenerateBusinessAnalysisFunctionDefinition = DefineFunction({
   },
 });
 
-const normalizeInput = (value: string): string => {
+const escapeMrkdwn = (value: string): string => {
   return value
     .trim()
     .replaceAll("&", "&amp;")
@@ -47,8 +48,14 @@ export default SlackFunction(
   async ({ inputs, client }) => {
     try {
       const framework = getFrameworkDefinition(inputs.framework);
-      const tableBlock = buildFrameworkTableBlock(inputs.framework);
-      const prompt = normalizeInput(inputs.prompt);
+      const analysisResults = await generateBusinessAnalysis(
+        inputs.framework,
+        inputs.prompt,
+      );
+      const tableBlock = buildFrameworkTableBlock(
+        inputs.framework,
+        analysisResults,
+      );
 
       const response = await client.apiCall("chat.postMessage", {
         channel: inputs.channel,
@@ -58,7 +65,7 @@ export default SlackFunction(
             type: "section",
             text: {
               type: "mrkdwn",
-              text: `*入力内容*\n${prompt}`,
+              text: `*入力内容*\n${escapeMrkdwn(inputs.prompt)}`,
             },
           },
           tableBlock,
@@ -67,7 +74,7 @@ export default SlackFunction(
             elements: [
               {
                 type: "mrkdwn",
-                text: `入力者: <@${inputs.user}>`,
+                text: `入力者: <@${inputs.user}>｜生成: Sakana Namazu`,
               },
             ],
           },
@@ -83,7 +90,9 @@ export default SlackFunction(
       return { outputs: {} };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Failed to generate analysis",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to generate analysis",
       };
     }
   },

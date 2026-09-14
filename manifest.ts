@@ -13,6 +13,6 @@ export default Manifest({
   icon: "assets/default_new_app_icon.png",
   functions: [GenerateBusinessAnalysisFunctionDefinition],
   workflows: [BusinessAnalysisFrameworkWorkflow],
-  outgoingDomains: [],
+  outgoingDomains: ["api.sakana.ai"],
   botScopes: ["commands", "chat:write", "chat:write.public"],
 });

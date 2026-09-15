@@ -14,14 +14,11 @@ const BusinessAnalysisFrameworkWorkflow = DefineWorkflow({
       interactivity: {
         type: Schema.slack.types.interactivity,
       },
-      channel: {
-        type: Schema.slack.types.channel_id,
-      },
       user: {
         type: Schema.slack.types.user_id,
       },
     },
-    required: ["interactivity", "channel", "user"],
+    required: ["interactivity", "user"],
   },
 });
 
@@ -29,7 +26,6 @@ const inputForm = BusinessAnalysisFrameworkWorkflow.addStep(
   OpenBusinessAnalysisFormFunctionDefinition,
   {
     interactivity: BusinessAnalysisFrameworkWorkflow.inputs.interactivity,
-    default_channel: BusinessAnalysisFrameworkWorkflow.inputs.channel,
   },
 );
 

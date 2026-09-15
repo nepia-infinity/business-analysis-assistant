@@ -20,12 +20,8 @@ export const OpenBusinessAnalysisFormFunctionDefinition = DefineFunction({
       interactivity: {
         type: Schema.slack.types.interactivity,
       },
-      default_channel: {
-        type: Schema.slack.types.channel_id,
-        description: "初期表示する投稿先",
-      },
     },
-    required: ["interactivity", "default_channel"],
+    required: ["interactivity"],
   },
   output_parameters: {
     properties: {
@@ -53,7 +49,6 @@ export default SlackFunction(
       interactivity_pointer: inputs.interactivity.interactivity_pointer,
       view: buildBusinessAnalysisModal({
         category: frameworkCategories[0].value,
-        channel: inputs.default_channel,
       }),
     });
 

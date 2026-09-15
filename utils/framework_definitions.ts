@@ -61,6 +61,27 @@ export const frameworkDefinitions: Record<string, FrameworkDefinition> = {
       { key: "organization", label: "Organization（組織）" },
     ],
   },
+  pest: {
+    label: "PEST分析",
+    perspectives: [
+      { key: "politics", label: "Politics（政治・法制度）" },
+      { key: "economy", label: "Economy（経済）" },
+      { key: "society", label: "Society（社会）" },
+      { key: "technology", label: "Technology（技術）" },
+    ],
+  },
+  "7s": {
+    label: "マッキンゼーの7S",
+    perspectives: [
+      { key: "strategy", label: "Strategy（戦略）" },
+      { key: "structure", label: "Structure（組織構造）" },
+      { key: "systems", label: "Systems（制度・仕組み）" },
+      { key: "shared_values", label: "Shared Values（共通価値観）" },
+      { key: "skills", label: "Skills（能力）" },
+      { key: "staff", label: "Staff（人材）" },
+      { key: "style", label: "Style（組織風土・経営スタイル）" },
+    ],
+  },
   "social-style": {
     label: "ソーシャルスタイル分析",
     perspectives: [

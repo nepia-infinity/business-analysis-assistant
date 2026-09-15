@@ -10,6 +10,9 @@ Namazu」で分析するSlackアプリです。
 - 4P分析
 - 4C分析
 - VRIO分析
+- PEST分析
+- マッキンゼーの7S
+- ソーシャルスタイル分析
 
 分析結果は、選択したフレームワークの観点ごとにSlackの表として投稿されます。
 
@@ -33,9 +36,12 @@ cd business-analysis-assistant
 
 ```dotenv
 SAKANA_AI_API_KEY=fish_...
+BUSINESS_ANALYSIS_DEFAULT_CHANNEL_ID=C0123456789
 ```
 
 `.env` はGitの管理対象外です。APIキーをソースコードへ直接記載しないでください。
+`BUSINESS_ANALYSIS_DEFAULT_CHANNEL_ID`には、分析フォームで最初に選択される
+投稿先チャンネルのIDを設定します。フォーム上で別のチャンネルへ変更することもできます。
 ファイルを変更した場合は `slack run` を再起動します。
 
 ## ローカル実行
@@ -62,6 +68,7 @@ slack trigger create \
 
 ```shell
 slack env set SAKANA_AI_API_KEY "fish_..."
+slack env set BUSINESS_ANALYSIS_DEFAULT_CHANNEL_ID "C0123456789"
 slack deploy
 slack trigger create \
   --trigger-def triggers/business_analysis_framework_trigger.ts
@@ -81,9 +88,10 @@ deno task test
 ## 処理の流れ
 
 1. Shortcutからワークフローを開始する
-2. フレームワーク、投稿先、分析対象を入力する
-3. Sakana NamazuがフレームワークごとのJSONを生成する
-4. アプリがJSONを検証し、Slackへ表形式で投稿する
+2. 中カテゴリーを選ぶと、対応するフレームワーク候補へ切り替わる
+3. フレームワーク、投稿先、分析対象を入力する
+4. Sakana NamazuがフレームワークごとのJSONを生成する
+5. アプリがJSONを検証し、Slackへ表形式で投稿する
 
 Sakana NamazuのWeb検索・コード実行機能は現在使用していません。分析はフォームへ
 入力された情報だけを根拠として行います。

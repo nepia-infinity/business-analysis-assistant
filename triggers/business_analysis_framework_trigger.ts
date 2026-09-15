@@ -14,9 +14,6 @@ const businessAnalysisFrameworkTrigger: Trigger<
     interactivity: {
       value: TriggerContextData.Shortcut.interactivity,
     },
-    channel: {
-      value: TriggerContextData.Shortcut.channel_id,
-    },
     user: {
       value: TriggerContextData.Shortcut.user_id,
     },

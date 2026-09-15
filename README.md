@@ -36,9 +36,12 @@ cd business-analysis-assistant
 
 ```dotenv
 SAKANA_AI_API_KEY=fish_...
+BUSINESS_ANALYSIS_DEFAULT_CHANNEL_ID=C0123456789
 ```
 
 `.env` はGitの管理対象外です。APIキーをソースコードへ直接記載しないでください。
+`BUSINESS_ANALYSIS_DEFAULT_CHANNEL_ID`には、分析フォームで最初に選択される
+投稿先チャンネルのIDを設定します。フォーム上で別のチャンネルへ変更することもできます。
 ファイルを変更した場合は `slack run` を再起動します。
 
 ## ローカル実行
@@ -65,6 +68,7 @@ slack trigger create \
 
 ```shell
 slack env set SAKANA_AI_API_KEY "fish_..."
+slack env set BUSINESS_ANALYSIS_DEFAULT_CHANNEL_ID "C0123456789"
 slack deploy
 slack trigger create \
   --trigger-def triggers/business_analysis_framework_trigger.ts

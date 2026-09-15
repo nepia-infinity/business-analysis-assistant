@@ -44,11 +44,15 @@ export const OpenBusinessAnalysisFormFunctionDefinition = DefineFunction({
 
 export default SlackFunction(
   OpenBusinessAnalysisFormFunctionDefinition,
-  async ({ inputs, client }) => {
+  async ({ inputs, client, env }) => {
+    const defaultChannel = env["BUSINESS_ANALYSIS_DEFAULT_CHANNEL_ID"] ??
+      Deno.env.get("BUSINESS_ANALYSIS_DEFAULT_CHANNEL_ID");
+
     const response = await client.views.open({
       interactivity_pointer: inputs.interactivity.interactivity_pointer,
       view: buildBusinessAnalysisModal({
         category: frameworkCategories[0].value,
+        channel: defaultChannel?.trim() || undefined,
       }),
     });
 

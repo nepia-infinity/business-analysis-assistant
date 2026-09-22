@@ -39,6 +39,13 @@ Deno.test("resources and organization category shows 7S", () => {
   );
 });
 
+Deno.test("goal setting category shows SMART", () => {
+  assertEquals(
+    getFrameworkValues("goal-setting"),
+    ["smart"],
+  );
+});
+
 Deno.test("modal keeps the selected framework and entered values", () => {
   const modal = buildBusinessAnalysisModal({
     category: "resources-organization",

@@ -69,6 +69,18 @@ export const frameworkCategories: FrameworkCategory[] = [
     ],
   },
   {
+    value: "goal-setting",
+    title: "目標設定・実行",
+    description: "目標を具体化し、達成条件と期限を整理します",
+    frameworks: [
+      {
+        value: "smart",
+        title: "SMARTフレームワーク（具体性・測定・達成可能性・関連性・期限）",
+        description: "目標を5つの観点から具体化します",
+      },
+    ],
+  },
+  {
     value: "communication",
     title: "コミュニケーション分析",
     description: "対人行動と効果的な接し方を整理します",

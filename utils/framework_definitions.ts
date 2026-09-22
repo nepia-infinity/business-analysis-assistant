@@ -82,6 +82,16 @@ export const frameworkDefinitions: Record<string, FrameworkDefinition> = {
       { key: "style", label: "Style（組織風土・経営スタイル）" },
     ],
   },
+  smart: {
+    label: "SMARTフレームワーク",
+    perspectives: [
+      { key: "specific", label: "Specific（具体的に）" },
+      { key: "measurable", label: "Measurable（測定可能に）" },
+      { key: "achievable", label: "Achievable（達成可能か）" },
+      { key: "realistic", label: "Realistic（関連性）" },
+      { key: "time_bound", label: "Time-bound（期限）" },
+    ],
+  },
   "social-style": {
     label: "ソーシャルスタイル分析",
     perspectives: [

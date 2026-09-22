@@ -88,7 +88,7 @@ export const frameworkDefinitions: Record<string, FrameworkDefinition> = {
       { key: "specific", label: "Specific（具体的に）" },
       { key: "measurable", label: "Measurable（測定可能に）" },
       { key: "achievable", label: "Achievable（達成可能か）" },
-      { key: "realistic", label: "Realistic（関連性）" },
+      { key: "relevant", label: "Relevant（関連性）" },
       { key: "time_bound", label: "Time-bound（期限）" },
     ],
   },

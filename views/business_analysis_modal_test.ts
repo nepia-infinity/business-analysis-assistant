@@ -46,6 +46,13 @@ Deno.test("goal setting category shows SMART", () => {
   );
 });
 
+Deno.test("communication category shows DESC and social style", () => {
+  assertEquals(
+    getFrameworkValues("communication"),
+    ["desc", "social-style"],
+  );
+});
+
 Deno.test("modal keeps the selected framework and entered values", () => {
   const modal = buildBusinessAnalysisModal({
     category: "resources-organization",

@@ -63,7 +63,7 @@ Deno.test("generateBusinessAnalysis requests four DESC fields in order", async (
   };
   assertEquals(
     responseFormat.json_schema.schema.required,
-    ["describe", "express", "specify", "choose"],
+    ["describe", "express", "suggest", "consequence"],
   );
   assertEquals(actual, expected);
 });

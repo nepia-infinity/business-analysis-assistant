@@ -92,6 +92,15 @@ export const frameworkDefinitions: Record<string, FrameworkDefinition> = {
       { key: "time_bound", label: "Time-bound（期限）" },
     ],
   },
+  desc: {
+    label: "DESC法",
+    perspectives: [
+      { key: "describe", label: "Describe（状況を説明）" },
+      { key: "express", label: "Express（気持ちと理由）" },
+      { key: "suggest", label: "Suggest（代わりの提案）" },
+      { key: "consequence", label: "Consequence（提案による結果）" },
+    ],
+  },
   "social-style": {
     label: "ソーシャルスタイル分析",
     perspectives: [

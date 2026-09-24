@@ -17,6 +17,14 @@ Deno.test("getFrameworkSystemPrompt returns a framework-specific prompt", () => 
   assertIncludes(prompt, "外部環境の要因");
 });
 
+Deno.test("DESC prompt asks for feelings, an alternative, and its consequence", () => {
+  const prompt = getFrameworkSystemPrompt("DESC法");
+
+  assertIncludes(prompt, "今抱えている気持ちとその理由");
+  assertIncludes(prompt, "代わりの具体的な提案");
+  assertIncludes(prompt, "提案を実行するとどうなるか");
+});
+
 Deno.test("all framework labels have a system prompt", () => {
   for (const framework of Object.values(frameworkDefinitions)) {
     const prompt = getFrameworkSystemPrompt(framework.label);

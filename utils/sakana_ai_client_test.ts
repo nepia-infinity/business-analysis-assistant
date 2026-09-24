@@ -32,6 +32,42 @@ Deno.test("generateBusinessAnalysis returns structured SWOT results", async () =
   assertEquals(actual, expected);
 });
 
+Deno.test("generateBusinessAnalysis requests four DESC fields in order", async () => {
+  const expected = {
+    describe: "昨日の会議で、私の説明中に話が重なりました。",
+    express: "説明を終えられず困りました。",
+    specify: "次回は話し終えるまで待っていただけますか。",
+    choose: "難しければ、発言の順番を先に決めたいです。",
+  };
+  let requestBody: Record<string, unknown> | undefined;
+
+  const actual = await generateBusinessAnalysis("desc", "会議で話を遮られる", {
+    apiKey: "test-key",
+    fetcher: (_input, init) => {
+      requestBody = JSON.parse(String(init?.body));
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            choices: [{ message: { content: JSON.stringify(expected) } }],
+          }),
+          { status: 200 },
+        ),
+      );
+    },
+  });
+
+  const responseFormat = requestBody?.response_format as {
+    json_schema: {
+      schema: { required: string[] };
+    };
+  };
+  assertEquals(
+    responseFormat.json_schema.schema.required,
+    ["describe", "express", "suggest", "consequence"],
+  );
+  assertEquals(actual, expected);
+});
+
 Deno.test("generateBusinessAnalysis rejects incomplete results", async () => {
   let errorMessage = "";
 

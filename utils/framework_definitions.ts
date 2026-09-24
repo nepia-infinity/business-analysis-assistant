@@ -95,10 +95,10 @@ export const frameworkDefinitions: Record<string, FrameworkDefinition> = {
   desc: {
     label: "DESC法",
     perspectives: [
-      { key: "describe", label: "Describe（事実を描写）" },
-      { key: "express", label: "Express（気持ち・影響を伝える）" },
-      { key: "specify", label: "Specify（具体的に提案する）" },
-      { key: "choose", label: "Choose（選択肢・結果を伝える）" },
+      { key: "describe", label: "Describe（状況を説明）" },
+      { key: "express", label: "Express（気持ちと理由）" },
+      { key: "suggest", label: "Suggest（代わりの提案）" },
+      { key: "consequence", label: "Consequence（提案による結果）" },
     ],
   },
   "social-style": {

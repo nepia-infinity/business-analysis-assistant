@@ -87,7 +87,7 @@ export const frameworkCategories: FrameworkCategory[] = [
     frameworks: [
       {
         value: "desc",
-        title: "DESC法（事実・気持ち・提案・選択肢）",
+        title: "DESC法（説明・気持ち・提案・結果）",
         description: "相手に伝える言葉を4段階で組み立てます",
       },
       {

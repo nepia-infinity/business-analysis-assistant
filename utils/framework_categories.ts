@@ -86,6 +86,11 @@ export const frameworkCategories: FrameworkCategory[] = [
     description: "対人行動と効果的な接し方を整理します",
     frameworks: [
       {
+        value: "desc",
+        title: "DESC法（事実・気持ち・提案・選択肢）",
+        description: "相手に伝える言葉を4段階で組み立てます",
+      },
+      {
         value: "social-style",
         title: "ソーシャルスタイル分析（行動傾向・接し方）",
         description: "観察できる行動から効果的な接し方を整理します",

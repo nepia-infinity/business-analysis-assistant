@@ -36,8 +36,8 @@ Deno.test("generateBusinessAnalysis requests four DESC fields in order", async (
   const expected = {
     describe: "昨日の会議で、私の説明中に話が重なりました。",
     express: "説明を終えられず困りました。",
-    specify: "次回は話し終えるまで待っていただけますか。",
-    choose: "難しければ、発言の順番を先に決めたいです。",
+    suggest: "次回は私が話し終えてからご意見をいただけますか。",
+    consequence: "そうすると、考えを最後まで共有してから意見交換できます。",
   };
   let requestBody: Record<string, unknown> | undefined;
 

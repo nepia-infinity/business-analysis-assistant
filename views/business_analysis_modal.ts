@@ -1,4 +1,5 @@
 import {
+  DEFAULT_CATEGORY,
   frameworkCategories,
   type FrameworkCategory,
   type FrameworkChoice,
@@ -20,11 +21,21 @@ export const getFrameworkBlockId = (category: string) =>
   `${FRAMEWORK_BLOCK_ID}_${category}`;
 
 export type ModalState = {
-  category: string;
+  category?: string;
   framework?: string;
   channel?: string;
   prompt?: string;
 };
+
+export type ValidatedModalSubmission = {
+  framework: string;
+  channel: string;
+  prompt: string;
+};
+
+export type ModalValidationResult =
+  | { ok: true; values: ValidatedModalSubmission }
+  | { ok: false; errors: Record<string, string> };
 
 type ViewState = {
   state?: {
@@ -54,9 +65,10 @@ const frameworkOption = (framework: FrameworkChoice) => ({
 });
 
 /** 中カテゴリーと入力済みの値から、ビジネス分析用モーダルを構築します。 */
-export const buildBusinessAnalysisModal = (state: ModalState) => {
-  const category = getFrameworkCategory(state.category);
-  const framework = getFrameworkChoice(state.category, state.framework);
+export const buildBusinessAnalysisModal = (state: ModalState = {}) => {
+  const categoryName = state.category ?? DEFAULT_CATEGORY;
+  const category = getFrameworkCategory(categoryName);
+  const framework = getFrameworkChoice(categoryName, state.framework);
 
   return {
     type: "modal",
@@ -126,7 +138,7 @@ const getStateValue = (
   actionId: string,
 ) => view.state?.values?.[blockId]?.[actionId];
 
-export const readModalState = (view: ViewState): Partial<ModalState> => {
+export const readModalState = (view: ViewState): ModalState => {
   const category = getStateValue(view, CATEGORY_BLOCK_ID, CATEGORY_ACTION_ID)
     ?.selected_option?.value;
   const framework = category
@@ -143,5 +155,39 @@ export const readModalState = (view: ViewState): Partial<ModalState> => {
     channel: getStateValue(view, CHANNEL_BLOCK_ID, CHANNEL_ACTION_ID)
       ?.selected_channel,
     prompt: getStateValue(view, PROMPT_BLOCK_ID, PROMPT_ACTION_ID)?.value,
+  };
+};
+
+/**
+ * モーダル送信時の入力値を検証し、有効な出力値またはブロック単位のエラーを返します。
+ */
+export const validateModalState = (
+  state: ModalState,
+): ModalValidationResult => {
+  const errors: Record<string, string> = {};
+  const trimmedPrompt = state.prompt?.trim();
+
+  if (!state.framework) {
+    errors[getFrameworkBlockId(state.category ?? "unknown")] =
+      "分析フレームワークを選択してください";
+  }
+  if (!state.channel) {
+    errors[CHANNEL_BLOCK_ID] = "投稿先を選択してください";
+  }
+  if (!trimmedPrompt) {
+    errors[PROMPT_BLOCK_ID] = "分析したい内容を入力してください";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { ok: false, errors };
+  }
+
+  return {
+    ok: true,
+    values: {
+      framework: state.framework!,
+      channel: state.channel!,
+      prompt: trimmedPrompt!,
+    },
   };
 };

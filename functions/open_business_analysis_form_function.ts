@@ -1,12 +1,10 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import { frameworkCategories } from "../utils/framework_categories.ts";
+import { getEnvValue } from "../utils/env.ts";
 import {
   buildBusinessAnalysisModal,
   CATEGORY_ACTION_ID,
-  CHANNEL_BLOCK_ID,
-  getFrameworkBlockId,
-  PROMPT_BLOCK_ID,
   readModalState,
+  validateModalState,
   VIEW_CALLBACK_ID,
 } from "../views/business_analysis_modal.ts";
 
@@ -45,14 +43,15 @@ export const OpenBusinessAnalysisFormFunctionDefinition = DefineFunction({
 export default SlackFunction(
   OpenBusinessAnalysisFormFunctionDefinition,
   async ({ inputs, client, env }) => {
-    const defaultChannel = env["BUSINESS_ANALYSIS_DEFAULT_CHANNEL_ID"] ??
-      Deno.env.get("BUSINESS_ANALYSIS_DEFAULT_CHANNEL_ID");
+    const defaultChannel = getEnvValue(
+      env,
+      "BUSINESS_ANALYSIS_DEFAULT_CHANNEL_ID",
+    );
 
     const response = await client.views.open({
       interactivity_pointer: inputs.interactivity.interactivity_pointer,
       view: buildBusinessAnalysisModal({
-        category: frameworkCategories[0].value,
-        channel: defaultChannel?.trim() || undefined,
+        channel: defaultChannel,
       }),
     });
 
@@ -95,31 +94,15 @@ export default SlackFunction(
   .addViewSubmissionHandler(
     VIEW_CALLBACK_ID,
     async ({ view, body, client }) => {
-      const state = readModalState(view);
-      const errors: Record<string, string> = {};
+      const validation = validateModalState(readModalState(view));
 
-      if (!state.framework) {
-        errors[getFrameworkBlockId(state.category ?? "unknown")] =
-          "分析フレームワークを選択してください";
-      }
-      if (!state.channel) {
-        errors[CHANNEL_BLOCK_ID] = "投稿先を選択してください";
-      }
-      if (!state.prompt?.trim()) {
-        errors[PROMPT_BLOCK_ID] = "分析したい内容を入力してください";
-      }
-
-      if (Object.keys(errors).length > 0) {
-        return { response_action: "errors", errors };
+      if (!validation.ok) {
+        return { response_action: "errors", errors: validation.errors };
       }
 
       await client.functions.completeSuccess({
         function_execution_id: body.function_data.execution_id,
-        outputs: {
-          framework: state.framework!,
-          channel: state.channel!,
-          prompt: state.prompt!.trim(),
-        },
+        outputs: validation.values,
       });
 
       return {};

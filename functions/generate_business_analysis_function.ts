@@ -1,6 +1,6 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import { buildFrameworkTableBlock } from "../blocks/framework_table_block.ts";
-import { getFrameworkDefinition } from "../utils/framework_definitions.ts";
+import { buildAnalysisResultMessage } from "../blocks/framework_table_block.ts";
+import { getEnvValue } from "../utils/env.ts";
 import { generateBusinessAnalysis } from "../utils/sakana_ai_client.ts";
 
 export const GenerateBusinessAnalysisFunctionDefinition = DefineFunction({
@@ -35,61 +35,34 @@ export const GenerateBusinessAnalysisFunctionDefinition = DefineFunction({
   },
 });
 
-const escapeMrkdwn = (value: string): string => {
-  return value
-    .trim()
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
-};
-
 export default SlackFunction(
   GenerateBusinessAnalysisFunctionDefinition,
   async ({ inputs, client, env }) => {
     try {
       // Slackの本番環境から環境変数を取得する。失敗したらローカルの.envから取得する。
-      const apiKey = env["SAKANA_AI_API_KEY"] ??
-        Deno.env.get("SAKANA_AI_API_KEY");
+      const apiKey = getEnvValue(env, "SAKANA_AI_API_KEY");
 
-      if (!apiKey?.trim()) {
+      if (!apiKey) {
         return {
           error: "SAKANA_AI_API_KEYが設定されていません",
         };
       }
 
-      const framework = getFrameworkDefinition(inputs.framework);
       const analysisResults = await generateBusinessAnalysis(
         inputs.framework,
         inputs.prompt,
         { apiKey },
       );
-      const tableBlock = buildFrameworkTableBlock(
-        inputs.framework,
-        analysisResults,
-      );
+      const message = buildAnalysisResultMessage({
+        framework: inputs.framework,
+        prompt: inputs.prompt,
+        user: inputs.user,
+        results: analysisResults,
+      });
 
       const response = await client.apiCall("chat.postMessage", {
         channel: inputs.channel,
-        text: `${framework.label}: ${inputs.prompt}`,
-        blocks: [
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: `*入力内容*\n${escapeMrkdwn(inputs.prompt)}`,
-            },
-          },
-          tableBlock,
-          {
-            type: "context",
-            elements: [
-              {
-                type: "mrkdwn",
-                text: `入力者: <@${inputs.user}>｜生成: Sakana Namazu`,
-              },
-            ],
-          },
-        ],
+        ...message,
       });
 
       if (!response.ok) {

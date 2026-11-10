@@ -10,7 +10,7 @@ const assertIncludes = (actual: string, expected: string): void => {
 };
 
 Deno.test("getFrameworkSystemPrompt returns a framework-specific prompt", () => {
-  const prompt = getFrameworkSystemPrompt("SWOT分析");
+  const prompt = getFrameworkSystemPrompt("swot");
 
   assertIncludes(prompt, "慎重なビジネスアナリスト");
   assertIncludes(prompt, "内部要因");
@@ -18,31 +18,31 @@ Deno.test("getFrameworkSystemPrompt returns a framework-specific prompt", () => 
 });
 
 Deno.test("DESC prompt asks for feelings, an alternative, and its consequence", () => {
-  const prompt = getFrameworkSystemPrompt("DESC法");
+  const prompt = getFrameworkSystemPrompt("desc");
 
   assertIncludes(prompt, "今抱えている気持ちとその理由");
   assertIncludes(prompt, "代わりの具体的な提案");
   assertIncludes(prompt, "提案を実行するとどうなるか");
 });
 
-Deno.test("all framework labels have a system prompt", () => {
-  for (const framework of Object.values(frameworkDefinitions)) {
-    const prompt = getFrameworkSystemPrompt(framework.label);
+Deno.test("all frameworks have a system prompt", () => {
+  for (const [key, framework] of Object.entries(frameworkDefinitions)) {
+    const prompt = getFrameworkSystemPrompt(key);
 
     assertIncludes(prompt, framework.label);
   }
 });
 
-Deno.test("getFrameworkSystemPrompt rejects an unsupported label", () => {
+Deno.test("getFrameworkSystemPrompt rejects an unsupported framework", () => {
   let errorMessage = "";
 
   try {
-    getFrameworkSystemPrompt("未対応の分析");
+    getFrameworkSystemPrompt("unknown");
   } catch (error) {
     errorMessage = error instanceof Error ? error.message : String(error);
   }
 
-  if (errorMessage !== "Unsupported framework label: 未対応の分析") {
+  if (errorMessage !== "Unsupported framework: unknown") {
     throw new Error(`Unexpected error: ${errorMessage}`);
   }
 });

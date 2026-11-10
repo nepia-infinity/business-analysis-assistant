@@ -96,7 +96,7 @@ export const generateBusinessAnalysis = async (
       messages: [
         {
           role: "system",
-          content: getFrameworkSystemPrompt(framework.label),
+          content: getFrameworkSystemPrompt(frameworkName),
         },
         {
           role: "user",

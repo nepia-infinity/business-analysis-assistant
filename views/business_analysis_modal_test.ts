@@ -2,10 +2,13 @@ import {
   buildBusinessAnalysisModal,
   CATEGORY_ACTION_ID,
   CATEGORY_BLOCK_ID,
+  CHANNEL_BLOCK_ID,
   FRAMEWORK_ACTION_ID,
   FRAMEWORK_BLOCK_ID,
   getFrameworkBlockId,
+  PROMPT_BLOCK_ID,
   readModalState,
+  validateModalState,
 } from "./business_analysis_modal.ts";
 
 const assertEquals = (actual: unknown, expected: unknown): void => {
@@ -96,4 +99,39 @@ Deno.test("category change does not retain a framework from the old category", (
 
   assertEquals(state.category, "resources-organization");
   assertEquals(state.framework, undefined);
+});
+
+Deno.test("validateModalState returns trimmed values when valid", () => {
+  const result = validateModalState({
+    category: "business-market",
+    framework: "swot",
+    channel: "C12345",
+    prompt: "  新規事業の分析  ",
+  });
+
+  assertEquals(result, {
+    ok: true,
+    values: {
+      framework: "swot",
+      channel: "C12345",
+      prompt: "新規事業の分析",
+    },
+  });
+});
+
+Deno.test("validateModalState reports block errors when fields are missing", () => {
+  const result = validateModalState({
+    category: "business-market",
+    prompt: "   ",
+  });
+
+  assertEquals(result, {
+    ok: false,
+    errors: {
+      [getFrameworkBlockId("business-market")]:
+        "分析フレームワークを選択してください",
+      [CHANNEL_BLOCK_ID]: "投稿先を選択してください",
+      [PROMPT_BLOCK_ID]: "分析したい内容を入力してください",
+    },
+  });
 });

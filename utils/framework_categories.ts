@@ -1,11 +1,23 @@
+import type { FrameworkName } from "./framework_definitions.ts";
+
+export const CATEGORY_NAMES = [
+  "business-market",
+  "marketing",
+  "resources-organization",
+  "goal-setting",
+  "communication",
+] as const;
+
+export type CategoryName = (typeof CATEGORY_NAMES)[number];
+
 export type FrameworkChoice = {
-  value: string;
+  value: FrameworkName;
   title: string;
   description: string;
 };
 
 export type FrameworkCategory = {
-  value: string;
+  value: CategoryName;
   title: string;
   description: string;
   frameworks: FrameworkChoice[];
@@ -98,6 +110,8 @@ export const frameworkCategories: FrameworkCategory[] = [
     ],
   },
 ];
+
+export const DEFAULT_CATEGORY: CategoryName = frameworkCategories[0].value;
 
 export const getFrameworkCategory = (
   categoryName: string,

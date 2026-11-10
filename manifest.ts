@@ -11,7 +11,7 @@ export default Manifest({
   name: "Business Analysis Assistant",
   description:
     "質問に答えるだけでビジネスフレームワークを使った分析を始められるSlackアプリ",
-  icon: "assets/default_new_app_icon.png",
+  icon: "assets/slack_app_icon.png",
   functions: [
     OpenBusinessAnalysisFormFunctionDefinition,
     GenerateBusinessAnalysisFunctionDefinition,
